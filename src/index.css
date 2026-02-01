@@ -1,0 +1,108 @@
+.light {
+  background-color: #f1f6f6;
+  color: #3f4451;
+}
+
+.light .footer {
+  background-color: #c3d8de;
+}
+
+.light .banner {
+  background-color: rgb(208, 238, 238);
+  color: #747879;
+  border-bottom-left-radius: 150% 600px;
+  border-bottom-right-radius: 150% 600px;
+}
+
+.light .gaming_topic .card .card-content a {
+  background-image: linear-gradient(to right, rgb(195, 216, 222), rgb(231, 237, 243));
+}
+
+.dark {
+  background-color: #2f3435;
+  color: #d1d5d6;
+}
+
+
+.dark .footer {
+  background-color:#575b5b;
+} 
+.dark .banner {
+  background-color: rgb(87, 91, 91);
+  color: #d1d5d6;
+  border-bottom-left-radius: 150% 600px;
+  border-bottom-right-radius: 150% 600px;
+  
+}
+.dark .gaming_topic .card .card-content a {
+   background-image: linear-gradient(to right, rgb(14, 15, 16), rgb(52, 54, 55));
+}
+
+.dark .banner {
+  color: #f1f6f6;
+}
+.dark .banner .loho {
+  background-image: url("./assets/images/loho.webp");
+  aspect-ratio: 1;
+  animation: l2 3.5s infinite linear;
+  background-size: cover;
+  background-repeat: no-repeat; 
+  background-position: center center;
+}
+.dark .gaming_topic .card {
+  background-color: #030303;
+}
+
+.edit-button {
+  background-color: #747879;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 5px; 
+}
+.test {
+  background-color: #747879;
+  color: #3f4451;
+}
+
+body {
+  /* Headings */
+  font-family: 'Poppins', sans-serif;
+
+  /* Questions & Answers */
+  /* font-family: 'Inter', sans-serif; */
+
+}
+
+.swiper-wrapper {
+  align-items: stretch; 
+}
+
+.swiper-slide {
+  height: auto !important; 
+}
+
+.custom-slide {
+  width: 500px !important;
+}
+
+.gaming_topic .card .card-content img,
+.gaming_quiz .card .card-content img,
+.gaming_latestQuiz .card .card-content img,
+.more-topics .card .card-content img{
+  transition: all 1.2s ease;
+}
+
+.gaming_topic .card:hover .card-content img,
+.gaming_quiz .card:hover .card-content img,
+.gaming_latestQuiz .card:hover .card-content img,
+.more-topics .card:hover .card-content img{
+  transform: scale(1.1);
+}
+@keyframes l2 {to{transform: rotate(1turn)}}

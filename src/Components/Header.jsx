@@ -10,7 +10,6 @@ import { AnimatePresence, motion} from "framer-motion"
 export default function Header() {
     const themeMode = useSelector((state) => state.theme.mode);
     const [show, setShow] = useState(false);
-    const dispatch = useDispatch();
 
     const handleThemeToggle = () => {
         dispatch(toggleTheme());

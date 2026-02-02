@@ -1,5 +1,4 @@
 import { HeroGeometric } from "@/Components/Ui/shadcn-io/shape-landing-hero";
-import logo from "@/assets/images/loho.webp";
 import { getApi } from "@/Services/Api";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -13,27 +12,27 @@ export default function MoreTopics() {
     const handleData = async (url) => {
         await getApi(data, setData, url);
     }
-
+    
     useEffect(() => {
         handleData("getActiveTopics");
-    }, []);
+    },[]);
 
-    useEffect(() => {
+    useEffect(()=> {
         if (data?.data && data.data.length > 0) {
 
             setLoadedData((prev) => {
                 const exiestingDataId = new Set(prev.map(items => items.id));
                 const uniqueNewData = data.data.filter(items => !exiestingDataId.has(items.id));
 
-                if (uniqueNewData.length === 0) return prev;
+                if (uniqueNewData.length === 0 ) return prev;
 
                 return [...prev, ...uniqueNewData];
             });
         }
-    }, [data]);
+    },[data]);
 
     const loadMore = () => {
-        const nextPageUrl = data?.next_page_url;
+        const nextPageUrl = data?.next_page_url ;
         if (!nextPageUrl) return;
         const url = new URL(nextPageUrl);
         const pageNumber = url?.searchParams.get('cursor');
@@ -55,11 +54,11 @@ export default function MoreTopics() {
     }
 
     return (
-        <>
+        <> 
             {/* ######################## Hero Section ########################  */}
             <div className="min-h-[70%] flex items-center justify-center pt-18 bg-transparent">
-                <HeroGeometric
-                    mode="dark"
+                <HeroGeometric 
+                    mode="dark" 
                     title1="Pick a Battle,"
                     title2="Lead the Pack."
                     description="Pick a field, face global rivals, and compete to lead each category with skill strategy, and true brilliance."
@@ -69,19 +68,19 @@ export default function MoreTopics() {
             {/* ######################## Content Section  ########################  */}
             <div className=" more-topics xl:mx-[100px] lg:mx-[80px] sm:mx-[50px] mx-[10px] mb-[20px] sm:mb-[30px] md:mb-[40px] lg:mb-[50px]">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10  mb-[50px] w-full">
-                    {loadedData?.length > 0 && loadedData.map((topic, index) => (
+                    {loadedData?.length > 0 && loadedData.map((topic,index) => (
                         <motion.div
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true, amount: 0.5 }}
+                            initial="hidden" 
+                            whileInView="visible" 
+                            viewport={{ once: true, amount: 0.5}}
                             variants={fadeUpVariants}
-                        >
-                            <NavLink to={`/quizzes/${topic.slug}`} state={{ id: topic.id, title: topic.name }}>
+                        > 
+                            <NavLink to={`/quizzes/${topic.slug}`} state={{id: topic.id, title: topic.name}}>
                                 <div key={index} className="card col-span-1 shadow-lg rounded-[10px] h-full">
                                     <div className="card-content rounded-[10px] bg-linear-to-r from-green-100/[0.1] via-transparent to-green-100/[0.1] h-full">
                                         <div className="xl:h-[250px] lg:h-[200px] sm:h-[150px] h-[150px] overflow-hidden rounded-t-[5px]">
-                                            <img src={topic.image ? `${import.meta.env.VITE_Image_URL}${topic.image}` : logo} alt={topic.name} className="xl:h-[250px] lg:h-[200px] sm:h-[150px] h-[150px] rounded-t-[5px] w-full" />
-                                        </div>
+                                            <img src={topic.image ?`${import.meta.env.VITE_Image_URL}${topic.image}` : logo } alt={topic.name} className="xl:h-[250px] lg:h-[200px] sm:h-[150px] h-[150px] rounded-t-[5px] w-full"/>
+                                        </div>  
                                         <div className="p-2">
                                             <h3 className="xl:text-2xl lg:text-xl md:text-xl text-lg text-start mx-[10px] text-bolder">{topic.name}</h3>
                                         </div>
@@ -89,15 +88,15 @@ export default function MoreTopics() {
                                 </div>
                             </NavLink>
                         </motion.div>
-                    ))}
+                    ))} 
                 </div>
 
                 <div className="flex justify-center items-center">
-                    {data?.next_page_url !== null &&
+                    {data?.next_page_url !== null && 
                         <motion.div
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true, amount: 0.5 }}
+                            initial="hidden" 
+                            whileInView="visible" 
+                            viewport={{ once: true, amount: 0.5}}
                             variants={fadeUpVariants}
                         >
                             <div onClick={loadMore} className="flex justify-center items-center p-1 rounded-[5px] bg-linear-to-b from-transparent via-transparent to-rose-500/[0.2]">

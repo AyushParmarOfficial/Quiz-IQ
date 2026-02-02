@@ -17,6 +17,7 @@ import FinishGame from "@/Pages/Game/FinishGame";
 import MoreTopics from "@/Pages/Home/MoreTopics";
 import MoreQuiz from "@/Pages/Home/MoreQuiz";
 import LeaderBoard from "@/Pages/Home/LeaderBoard";
+import Account from "@/Pages/Home/Account";
 
 export default function Web() {
     return (
@@ -25,6 +26,7 @@ export default function Web() {
                 <Route index element={<Home/>} />
                 <Route path="/signin/*" element={<SignIn/>} />
                 <Route path="/signup/*" element={<SignUp/>} />
+                <Route path="/account" element={<Account/>} />
                 <Route path="/quizzes/topics" element={<MoreTopics/>} />
                 <Route path="/leaderboard" element={<LeaderBoard/>} />
                 <Route path="/quizzes/:topicSlug?" element={<MoreQuiz/>} />

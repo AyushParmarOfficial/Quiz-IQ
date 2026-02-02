@@ -48,10 +48,10 @@ function ElegantShape({
             "absolute inset-0 rounded-full",
             "bg-gradient-to-r to-transparent",
             gradient,
-            "backdrop-blur-[2px] border-2 border-white/[0.15]",
-            "shadow-[0_8px_32px_0_rgba(255,255,255,0.1)]",
+            "backdrop-blur-[2px] border-2 border-black/[0.15] dark:border-white/[0.15]",
+            "shadow-[0_8px_32px_0_rgba(0,0,0,0.1)] dark:shadow-[0_8px_32px_0_rgba(255,255,255,0.1)]",
             "after:absolute after:inset-0 after:rounded-full",
-            "after:bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.2),transparent_70%)]"
+            "after:bg-[radial-gradient(circle_at_50%_50%,rgba(0,0,0,0.2),transparent_70%)] dark:after:bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.2),transparent_70%)]"
           )} />
       </motion.div>
     </motion.div>
@@ -81,7 +81,7 @@ export function HeroGeometric({
   return (
     <div
       className={cn(
-        "relative min-h-[75vh] w-full flex items-center justify-center overflow-hidden bg-[#030303]",
+        "relative min-h-[75vh] w-full flex items-center justify-center overflow-hidden bg-white/90 dark:bg-[#030303] transition-colors duration-300",
         className
       )}>
       <div
@@ -127,13 +127,13 @@ export function HeroGeometric({
             <h1
               className="text-5xl sm:text-6xl md:text-7xl font-bold mb-6 md:mb-8 tracking-tight">
               <span
-                className="bg-clip-text text-transparent bg-gradient-to-b from-white to-white/80">
+                className="bg-clip-text text-transparent bg-gradient-to-b from-black/90 dark:from-white to-black/70 dark:to-white/80">
                 {title1}
               </span>
               <br />
               <span
                 className={cn(
-                  "bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-white/90 to-rose-300"
+                  "bg-clip-text text-transparent bg-gradient-to-r from-indigo-700 dark:from-indigo-300 via-gray-800/90 dark:via-white/90 to-rose-700 dark:to-rose-300"
                 )}>
                 {title2}
               </span>
@@ -142,14 +142,14 @@ export function HeroGeometric({
 
           <motion.div animate="visible" custom={2} initial="hidden" variants={fadeUpVariants}>
             <p
-              className="text-base sm:text-lg md:text-lg text-white/40 mb-8 leading-relaxed font-light tracking-wide max-w-xl mx-auto px-4">
+              className="text-base sm:text-lg md:text-lg text-gray-700/60 dark:text-white/40 mb-8 leading-relaxed font-light tracking-wide max-w-xl mx-auto px-4">
               {description}
             </p>
           </motion.div>
         </div>
       </div>
       <div
-        className="absolute inset-0 bg-gradient-to-t from-[#030303] via-transparent to-[#030303]/80 pointer-events-none" />
+        className="absolute inset-0 bg-gradient-to-t from-white dark:from-[#030303] via-transparent to-white/80 dark:to-[#030303]/80 pointer-events-none" />
     </div>
   );
 }

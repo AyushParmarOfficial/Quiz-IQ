@@ -10,13 +10,11 @@ import "swiper/css/navigation"
 import 'swiper/css/pagination'
 
 export default function AllQuizzes() {
-    
-    const [data, setData] = useState([]);
 
+    const [data, setData] = useState([]);
     const quizRef = useRef(null);
     const quizPriviousRef = useRef(null);
     const quizNextRef = useRef(null);
-
     const url = "allQuiz";
 
     useEffect(() => {
@@ -24,7 +22,7 @@ export default function AllQuizzes() {
             await getApi(data, setData, url);
         }
         handleData();
-    },[]);
+    }, []);
 
     useEffect(() => {
         if (!quizRef.current) return;
@@ -36,9 +34,9 @@ export default function AllQuizzes() {
         if (prevEl && nextEl) {
             swiper.params.navigation.prevEl = prevEl;
             swiper.params.navigation.nextEl = nextEl;
-            swiper.navigation.destroy(); 
-            swiper.navigation.init();    
-            swiper.navigation.update();  
+            swiper.navigation.destroy();
+            swiper.navigation.init();
+            swiper.navigation.update();
         }
     }, [data]);
 
@@ -55,8 +53,8 @@ export default function AllQuizzes() {
 
     const itemVariants = {
         hidden: { opacity: 0, y: 50 },
-        visible: { 
-            opacity: 1, 
+        visible: {
+            opacity: 1,
             y: -120,
             transition: {
                 duration: 1.8,
@@ -64,113 +62,101 @@ export default function AllQuizzes() {
             },
         },
     }
-    
+
     return (
         <>
             {data && data.length > 0 && (
-                <div className="gaming_quiz mb-0 xl:mx-[100px] lg:mx-[80px] sm:mx-[50px] mx-[10px] ">
-                    <motion.div 
-                        initial="hidden" 
-                        whileInView="visible" 
-                        viewport={{ once: true, amount: 0.3}}
+                <div className="max-w-7xl mx-auto px-4 py-16">
+                    <motion.div
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, amount: 0.1 }}
                         variants={fadeUpVariants}
                     >
                         <motion.div variants={itemVariants}>
-                            <div className=" mx-[20px] mt-[5px] flex justify-between items-center mb-6 md:mb-8 ">
-                                <h1
-                                    className="text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight"
-                                >
-                                    <span
-                                        className="bg-clip-text text-transparent bg-gradient-to-b from-white/90 via-white/90  to-amber-500/[0.5]">
-                                        All Quizzes
-                                    </span>
-                                </h1>
-
-                                <div className="flex gap-5">
-                                    {/* Previous Btn  */}
-                                    <button
-                                        ref={quizPriviousRef}
-                                        className="text-2xl font-bold p-2 rounded-[5px] bg-amber-500/[0.05] hover:bg-amber-500/[0.2] border-1"
-                                    >
-                                        &#10094; 
-                                    </button>
-
-                                    {/* Next Btn  */}
-                                    <button
-                                        ref={quizNextRef}
-                                        className="text-2xl font-bold p-2 rounded-[5px] bg-amber-500/[0.05] hover:bg-amber-500/[0.2] border-1"
-                                    >
-                                        &#10095;
-                                    </button>
+                            <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+                                <div>
+                                    <h2 className="text-4xl md:text-5xl font-black text-neutral-900 dark:text-white tracking-tight">
+                                        Explore
+                                        <span className="text-indigo-600 dark:text-indigo-400"> Everything.</span>
+                                    </h2>
+                                    <p className="text-neutral-500 dark:text-neutral-400 mt-3 text-lg">
+                                        Dive into our full collection of quizzes.
+                                    </p>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                    <div className="hidden md:flex gap-2">
+                                        <button
+                                            ref={quizPriviousRef}
+                                            className="w-12 h-12 rounded-full flex items-center justify-center border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-neutral-900 dark:text-white"
+                                        >
+                                            &#10094;
+                                        </button>
+                                        <button
+                                            ref={quizNextRef}
+                                            className="w-12 h-12 rounded-full flex items-center justify-center border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-neutral-900 dark:text-white"
+                                        >
+                                            &#10095;
+                                        </button>
+                                    </div>
+                                    <NavLink to={'/quizzes'} state={{ title: "All Quizzes" }} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-white font-semibold hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all">
+                                        Browse Library
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                                    </NavLink>
                                 </div>
                             </div>
                         </motion.div>
-                        <div className=" text-center mx-[25px]">
-                            <motion.div variants={itemVariants}>
-                                <div className="flex gap-5 items-center my-[20px]">
-                                    <Swiper
-                                        modules={[ Navigation, Pagination ]}
-                                        spaceBetween={20}
-                                        slidesPerView={4}
-                                        centeredSlides={false}
-                                        speed={1000}
-                                        navigation={{
-                                            prevEl: quizPriviousRef.current,
-                                            nextEl: quizNextRef.current
-                                        }}
-                                        onInit={(swiper) => {quizRef.current = swiper}}
-                                        breakpoints={{
-                                            320: {
-                                                slidesPerView: 1,
-                                                spaceBetween: 20,
-                                            },
-                                            500: {
-                                                slidesPerView: 2,
-                                                spaceBetween: 30,
-                                            },
-                                            1024: {
-                                                slidesPerView: 3,
-                                                spaceBetween: 30,
-                                            },
-                                            1440: {
-                                                slidesPerView: 4,
-                                                spaceBetween: 30,
-                                            }
-                                        }}
-                                    >
-                                        {data?.length > 0 && data.map((quiz,index) => (
-                                            <SwiperSlide key={index}>
-                                                <NavLink to={`/quizzes/questions/${quiz.slug}`}>
-                                                    <div key={index} className="card shadow-lg rounded-[10px] h-full ">
-                                                        <div className="card-content rounded-[10px] bg-linear-to-r from-green-100/[0.1] via-transparent to-green-100/[0.1] h-full">
-                                                            <div className="xl:h-[250px] lg:h-[200px] sm:h-[150px] h-[150px] overflow-hidden rounded-t-[5px]">
-                                                                <img src={quiz.image ?`${import.meta.env.VITE_Image_URL}${quiz.image}` : logo } alt={quiz.name} className="xl:h-[250px] lg:h-[200px] sm:h-[150px] h-[150px] rounded-t-[5px] w-full"/>
-                                                            </div>  
-                                                            <div className="p-2">
-                                                                <h3 className="xl:text-2xl lg:text-xl md:text-xl text-lg text-start mx-[10px] text-bolder ">{quiz.name}</h3>
-                                                            </div>
-                                                        </div>
+
+                        <motion.div variants={itemVariants} className="relative">
+                            <Swiper
+                                modules={[Navigation, Pagination]}
+                                spaceBetween={24}
+                                slidesPerView={1}
+                                speed={800}
+                                navigation={{
+                                    prevEl: quizPriviousRef.current,
+                                    nextEl: quizNextRef.current
+                                }}
+                                onInit={(swiper) => { quizRef.current = swiper }}
+                                breakpoints={{
+                                    640: { slidesPerView: 2 },
+                                    1024: { slidesPerView: 4 },
+                                    1280: { slidesPerView: 4 }
+                                }}
+                                className="!overflow-hidden !pb-4"
+                            >
+                                {data?.length > 0 && data.map((quiz, index) => (
+                                    <SwiperSlide key={index}>
+                                        <NavLink to={`/quizzes/questions/${quiz.slug}`} className="group relative block h-[280px] overflow-hidden rounded-2xl bg-neutral-100 dark:bg-neutral-900">
+                                            {/* Image Background */}
+                                            <div className="absolute inset-0">
+                                                <img
+                                                    src={quiz.image ? `${import.meta.env.VITE_Image_URL}${quiz.image}` : logo}
+                                                    alt={quiz.name}
+                                                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 dark:opacity-70 group-hover:opacity-100"
+                                                />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+                                            </div>
+
+                                            {/* Content */}
+                                            <div className="absolute inset-0 flex flex-col justify-end p-6">
+                                                <div className="translate-y-4 transform transition-transform duration-300 group-hover:translate-y-0">
+                                                    <div className="mb-2 inline-flex items-center rounded-lg bg-indigo-600 px-2 py-1 text-xs font-bold text-white shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
+                                                        Start Quiz
                                                     </div>
-                                                </NavLink>
-                                            </SwiperSlide>
-                                        ))}
-                                    </Swiper>
-                                </div>
-
-                            </motion.div>
-                        </div>
-
-                        <div className="flex justify-center">
-                            <motion.div variants={itemVariants}>
-                                <NavLink to={'/quizzes'} state={{title: "All Quizzes"}}>
-                                    <div className="p-1 md:p-2 rounded-[5px] bg-linear-to-b from-transparent via-transparent to-amber-300/[0.1]">
-                                        <div className="btn p-1 xl:p-3 px-2 xl:px-10 rounded-[5px] border border-amber-500/[0.2] hover:border-amber-500/[0.4]">
-                                            <span className="text-sm sm:text-lg md:text-xl ">View More</span>
-                                        </div>
-                                    </div>
-                                </NavLink>
-                            </motion.div>
-                        </div>
+                                                    <h3 className="text-xl font-bold text-white leading-tight">
+                                                        {quiz.name}
+                                                    </h3>
+                                                    <p className="mt-2 text-sm text-gray-300 opacity-0 transition-opacity duration-300 group-hover:opacity-100 line-clamp-2">
+                                                        Check your skills in this {quiz.name} challenge.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </NavLink>
+                                    </SwiperSlide>
+                                ))}
+                            </Swiper>
+                        </motion.div>
                     </motion.div>
                 </div>
             )}

@@ -1,95 +1,87 @@
 import { useDispatch, useSelector } from "react-redux";
-import { toggleTheme } from "../Features/Themes/themeSlice";
 import { NavLink, useLocation } from "react-router-dom";
+import { toggleTheme } from "../Features/Themes/themeSlice";
 
 export default function Footer() {
 
     const themeMode = useSelector((state) => state.theme.mode);
     const { pathname } = useLocation();
-    const dispatch = useDispatch(); 
+    const dispatch = useDispatch();
 
     const paths = ['/signin', '/signup'];
-    const showFullFooter = ! paths.includes(pathname);
-    const handleThemeToggle = () => {
-        dispatch(toggleTheme());
-    }
+    const showFullFooter = !paths.includes(pathname);
 
-    const Logo = ({ size = 100, className = "" }) => {
-        return (
-            <svg 
-                width={size} 
-                height={size} 
-                viewBox="0 0 100 100" 
-                fill="none" 
-                xmlns="http://www.w3.org/2000/svg"
-                className={className}
-                aria-label="Quiz Website Logo"
-                role="img"
-            >
-                <defs>
-                    <linearGradient id="logo-gradiant" x1="0%" y1="0%" x2="100%" y2="100%">
-                    {/* Main color from your original code */}
-                    <stop offset="0%" stopColor="#fff" /> 
-                    <stop offset="50%" stopColor="#fff" /> 
+    if (!showFullFooter) return null;
 
-                    {/* Lighter or different shade for the gradient effect */}
-                    <stop offset="100%" stopColor="#ffa1ad" />
-                    </linearGradient>
-                </defs>
-                {/* Outer Circular Ring */}
-                <path 
-                d="M80 50C80 66.5685 66.5685 80 50 80C33.4315 80 20 66.5685 20 50C20 33.4315 33.4315 20 50 20C60.25 20 69.35 25.12 74.8 32.95" 
-                stroke={`url(#logo-gradiant)`}
-                strokeWidth="6" 
-                strokeLinecap="round"
-                />
-                
-                {/* Central Lightning Bolt */}
-                <path 
-                d="M55 35L40 55H50L45 75L65 45H55L60 30" 
-                fill={`url(#logo-gradiant)`}
-                />
-            </svg>
-        );
-    }
     return (
-        <>
-            {showFullFooter && 
-                <footer className="bg-black text-white pt-10 px-10 pb-5 flex flex-col items-center bg-linear-to-t from-white/[0.2] via-transparent">
-                    <div className="flex flex-col mb-[30px] lg:mb-[50px] lg:flex-row gap-10 lg:gap-25 justify-start md:justify-center items-start lg:items-center w-full">
-                        <div className="flex flex-col md:flex-row gap-5 md:gap-1 items-start w-full md:w-max">
-                            <div className="flex flex-col justify-start items-center lg:mt-[-15px] mt-[-20px]  w-full md:w-max">
-                                <Logo size={150} className="hover:scale-125 transition-transform  transition duration-900 ease-in-out" />
-                                
-                                <p className=" text-xl font-bold text-center tracking-widest hover:bg-clip-text hover:text-transparent hover:bg-linear-to-t from-rose-300/[0.5] via-white/90 to-white/90">QUIZ.IQ</p>
+        <footer className="bg-white dark:bg-neutral-950 border-t border-neutral-200 dark:border-neutral-800 pt-16 pb-8 transition-colors duration-300">
+            <div className="max-w-7xl mx-auto px-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+                    {/* Brand Column */}
+                    <div className="space-y-4">
+                        <NavLink to="/" className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xl">
+                                Q
                             </div>
-                            <div className="flex flex-col justify-start items-start w-full">
-                                <p className="text-gray-50 text-xl text-start text-bold mt-2 md:mt-0 w-full hover:bg-clip-text hover:text-transparent hover:bg-linear-to-t from-rose-300/[0.5] via-white/90 to-white/90">
-                                    Elevate Your Intellect. Achieve Mental Peak.
-                                </p>
-                                <p className="text-gray-500 mt-5 max-w-[550px] lg:max-w-[450px] hover:text-gray-400">Master curated challenges built for the modern thinker. Elevate your  
-                                    cognitive baseline and visualize your journey toward self-mastery
-                                    with every insight gained. Step into the arena and refine your intellect today.
-                                </p>
-
-                            </div>
-                        </div>
-                        <div className="flex flex-col justify-start md:ml-10 lg:ml-0">
-                            <p className="uppercase mt-1 hover:bg-clip-text hover:text-transparent hover:bg-linear-to-t from-rose-300/[0.5] via-white/90 to-white/90"> Explore</p>
-                            <nav className="flex gap-3 md:gap-2 flex-col justify-center mt-3 text-sm uppercase tracking-wider text-gray-500">
-                                <NavLink to="/" className="hover:text-white">Home</NavLink>
-                                <NavLink to="/leaderboard" className="hover:text-white">Leaderboard</NavLink>
-                                <NavLink to="/quizzes" className="hover:text-white">Quizzes</NavLink>
-                                <NavLink to="/story" className="hover:text-white">Our Story</NavLink>
-                            </nav>
-                        </div>                    
+                            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-neutral-950 to-neutral-500 dark:from-white dark:to-neutral-400">
+                                QUIZ.IQ
+                            </span>
+                        </NavLink>
+                        <p className="text-neutral-500 dark:text-neutral-400 text-sm leading-relaxed max-w-xs">
+                            Elevate your cognitive baseline. Master curated challenges built for the modern thinker.
+                        </p>
                     </div>
 
-                    <div className="mt-5 pt-3 border-t border-gray-500 w-full text-center text-sm text-gray-400">
-                        © 2026 QUIZ.IQ. All rights reserved.
+                    {/* Links Columns */}
+                    <div>
+                        <h3 className="font-semibold text-neutral-900 dark:text-gray-100 mb-4">Platform</h3>
+                        <ul className="space-y-3 text-sm text-neutral-500 dark:text-neutral-400">
+                            <li><NavLink to="/quizzes" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">All Quizzes</NavLink></li>
+                            <li><NavLink to="/leaderboard" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Leaderboard</NavLink></li>
+                            <li><NavLink to="/challenges" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Daily Challenges</NavLink></li>
+                        </ul>
                     </div>
-                </footer>
-            }
-        </>
+
+                    <div>
+                        <h3 className="font-semibold text-neutral-900 dark:text-gray-100 mb-4">Company</h3>
+                        <ul className="space-y-3 text-sm text-neutral-500 dark:text-neutral-400">
+                            <li><NavLink to="/about" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">About Us</NavLink></li>
+                            <li><NavLink to="/story" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Our Story</NavLink></li>
+                            <li><NavLink to="/careers" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Careers</NavLink></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 className="font-semibold text-neutral-900 dark:text-gray-100 mb-4">Legal</h3>
+                        <ul className="space-y-3 text-sm text-neutral-500 dark:text-neutral-400">
+                            <li><NavLink to="/privacy" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Privacy Policy</NavLink></li>
+                            <li><NavLink to="/terms" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Terms of Service</NavLink></li>
+                            <li><NavLink to="/cookies" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Cookie Policy</NavLink></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div className="pt-8 border-t border-neutral-200 dark:border-neutral-800 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                        © {new Date().getFullYear()} QUIZ.IQ. All rights reserved.
+                    </p>
+                    <div className="flex gap-6">
+                        {/* Social Icons placeholder */}
+                        <a href="#" className="text-neutral-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                            <span className="sr-only">Twitter</span>
+                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
+                            </svg>
+                        </a>
+                        <a href="#" className="text-neutral-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                            <span className="sr-only">GitHub</span>
+                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
     );
 }

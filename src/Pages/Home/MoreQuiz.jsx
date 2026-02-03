@@ -3,6 +3,7 @@ import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 import logo from "../../assets/images/i2.png";
 import { NavLink, useLocation, useParams } from "react-router-dom";
+import Loader from "@/Components/Common/Loader";
 
 
 function QuizHero({ title, description }) {
@@ -39,7 +40,7 @@ function QuizHero({ title, description }) {
                     >
                         <h1 className="text-5xl md:text-7xl font-black tracking-tight text-neutral-900 dark:text-white leading-tight">
                             {title || "Explore"} <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-orange-500">
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-indigo-600">
                                 {title ? "Challenges." : "Quizzes."}
                             </span>
                         </h1>
@@ -54,7 +55,7 @@ function QuizHero({ title, description }) {
                         style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
                         className="relative w-72 h-80 md:w-96 md:h-[400px] bg-white/80 dark:bg-neutral-900/80 rounded-3xl border border-neutral-200 dark:border-white/10 shadow-2xl shadow-rose-500/20 backdrop-blur-xl flex items-center justify-center p-6"
                     >
-                        <div style={{ transform: "translateZ(40px)" }} className="absolute inset-4 rounded-2xl border border-neutral-100 dark:border-white/5 bg-gradient-to-br from-rose-500/5 to-orange-500/5 flex flex-col items-center justify-center text-center space-y-4">
+                        <div style={{ transform: "translateZ(40px)" }} className="absolute inset-4 rounded-2xl border border-neutral-100 dark:border-white/5 bg-gradient-to-br from-rose-500/5 to-indigo-500/5 flex flex-col items-center justify-center text-center space-y-4">
                             <div className="text-7xl animate-bounce">🎯</div>
                             <div className="px-5 py-2 bg-rose-500 rounded-full text-white text-sm font-bold shadow-lg shadow-rose-500/30">
                                 Ready to Play?
@@ -73,9 +74,10 @@ export default function MoreQuiz() {
     const stateData = location.state ?? " ";
     const [data, setData] = useState([]);
     const [loadedData, setLoadedData] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const handleData = async (url) => {
-        await getApi(data, setData, url);
+        await getApi(data, setData, url, setLoading);
     }
 
     useEffect(() => {
@@ -113,27 +115,10 @@ export default function MoreQuiz() {
 
     }
 
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.1
-            }
-        }
-    };
 
-    const itemVariants = {
-        hidden: { opacity: 0, y: 30 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: {
-                duration: 0.5,
-                ease: "easeOut",
-            },
-        }
-    };
+    if (loading && loadedData.length === 0) {
+        return <Loader />;
+    }
 
     return (
         <div className="min-h-screen bg-neutral-50 dark:bg-[#030303] transition-colors duration-300">
@@ -145,15 +130,9 @@ export default function MoreQuiz() {
             </div>
 
             <div className="max-w-7xl mx-auto px-4 pb-24 -mt-10 relative z-10">
-                <motion.div
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.2 }}
-                    variants={containerVariants}
-                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
-                >
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                     {loadedData?.length > 0 && loadedData.map((quiz, index) => (
-                        <motion.div key={index} variants={itemVariants}>
+                        <div key={index}>
                             <NavLink to={`/quizzes/questions/${quiz.slug}`} className="block h-full group perspective-1000">
                                 <div className="relative h-[320px] bg-white dark:bg-neutral-900 rounded-3xl overflow-hidden border border-neutral-200 dark:border-neutral-800 shadow-lg hover:shadow-2xl transition-all duration-500 transform group-hover:-translate-y-2 group-hover:rotate-x-2">
 
@@ -183,9 +162,9 @@ export default function MoreQuiz() {
                                     </div>
                                 </div>
                             </NavLink>
-                        </motion.div>
+                        </div>
                     ))}
-                </motion.div>
+                </div>
 
                 <div className="flex justify-center mt-16">
                     {data?.quizzes?.next_page_url != null &&

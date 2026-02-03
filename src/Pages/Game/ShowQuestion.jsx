@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { getApi, postApi } from "../../Services/Api";
 import { useSelector } from "react-redux";
 import { HeroGeometric } from "@/Components/Ui/shadcn-io/shape-landing-hero";
+import Loader from "@/Components/Common/Loader";
 
 export default function ShowQuestion() {
     const { quizSlug } = useParams();
@@ -21,12 +22,13 @@ export default function ShowQuestion() {
     const [timer, setTimer] = useState({});
     const [seconds, setSeconds] = useState(0);
     const [minutes, setMinutes] = useState("00:00");
+    const [loading, setLoading] = useState(true);
 
     const url = `questions/${quizSlug}${state?.userResult ? `?userResultId=${state.userResult}` : ""}`;
 
     // Fetch quiz questions 
     useEffect(() => {
-        getApi(data, setData, url);
+        getApi(data, setData, url, setLoading);
     }, []);
 
     // Animations 
@@ -122,7 +124,7 @@ export default function ShowQuestion() {
             }
         }
 
-        const response = await postApi(userAnswer, setUserAnswer, `questions/${quizSlug}`, setError, setSuccess);
+        const response = await postApi(userAnswer, setUserAnswer, `questions/${quizSlug}`, setError, setSuccess, false, setLoading);
         response && navigate("/finishQuiz", { state: { apiResponse: response } });
     };
 
@@ -226,8 +228,13 @@ export default function ShowQuestion() {
 
     const optionLabels = ["A", "B", "C", "D"];
 
+    if (loading && (!data?.questions)) {
+        return <Loader />;
+    }
+
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-[#030303] transition-colors duration-300">
+            {loading && <Loader />}
             {/* ######################## Hero Section ########################  */}
             <div className="fixed inset-0 z-0">
                 <HeroGeometric

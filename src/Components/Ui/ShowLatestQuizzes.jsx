@@ -8,10 +8,12 @@ import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation"
 import 'swiper/css/pagination'
+import Loader from "@/Components/Common/Loader";
 
 export default function ShowLatestQuizzes() {
 
     const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const latestQuizRef = useRef(null);
     const latestQuizPriviousRef = useRef(null);
@@ -21,7 +23,7 @@ export default function ShowLatestQuizzes() {
 
     useEffect(() => {
         const handleData = async (e) => {
-            await getApi(data, setData, url);
+            await getApi(data, setData, url, setLoading);
         }
         handleData();
     }, []);
@@ -65,6 +67,10 @@ export default function ShowLatestQuizzes() {
         },
     }
 
+    if (loading && data.length === 0) {
+        return <Loader />;
+    }
+
     return (
         <>
             {data && data.length > 0 && (
@@ -79,7 +85,7 @@ export default function ShowLatestQuizzes() {
                             <div className="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-neutral-200 dark:border-neutral-800 pb-6 gap-4">
                                 <div>
                                     <h2 className="text-4xl md:text-6xl font-black tracking-tight text-neutral-900 dark:text-white">
-                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-orange-500">
+                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-indigo-600">
                                             Fresh Drops.
                                         </span>
                                     </h2>
@@ -129,7 +135,7 @@ export default function ShowLatestQuizzes() {
                             >
                                 {data?.length > 0 && data.map((latestQuiz, index) => (
                                     <SwiperSlide key={index}>
-                                        <NavLink to={`/quizzes/questions/${latestQuiz.slug}`} className="group relative block h-[280px] overflow-hidden rounded-2xl bg-neutral-100 dark:bg-neutral-900">
+                                        <NavLink to={`/quizzes/questions/${latestQuiz.slug}`} className="group relative block h-[280px] overflow-hidden rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-md hover:shadow-xl transition-all duration-300">
                                             {/* Image Background */}
                                             <div className="absolute inset-0">
                                                 <img
@@ -137,7 +143,7 @@ export default function ShowLatestQuizzes() {
                                                     alt={latestQuiz.name}
                                                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 dark:opacity-70 group-hover:opacity-100"
                                                 />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
                                             </div>
 
                                             {/* Floating Badge for Latest */}

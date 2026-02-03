@@ -9,10 +9,12 @@ import "swiper/css";
 import "swiper/css/navigation"
 import 'swiper/css/pagination'
 import 'swiper/css/effect-fade'
+import Loader from "@/Components/Common/Loader";
 
 export default function ShowTopics() {
 
     const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const topicRef = useRef(null);
     const topicPriviousRef = useRef(null);
@@ -22,7 +24,7 @@ export default function ShowTopics() {
 
     useEffect(() => {
         const handleData = async (e) => {
-            await getApi(data, setData, url);
+            await getApi(data, setData, url, setLoading);
         }
         handleData();
     }, []);
@@ -66,6 +68,9 @@ export default function ShowTopics() {
         },
     }
 
+    if (loading && data.length === 0) {
+        return <Loader />;
+    }
 
     return (
         <>
@@ -81,12 +86,12 @@ export default function ShowTopics() {
                             <div className="flex justify-between items-end mb-8 border-b border-neutral-200 dark:border-neutral-800 pb-4">
                                 <div>
                                     <h2 className="text-3xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-neutral-900 to-neutral-600 dark:from-white dark:to-neutral-400">
-                                        Explore Topics
+                                        Explore <span className="bg-clip-text text-transparent bg-gradient-to-r from-rose-500 to-indigo-600">Topics</span>
                                     </h2>
-                                    <p className="text-neutral-500 dark:text-neutral-400 mt-2">Find your favorite category and start playing.</p>
+                                    <p className="text-neutral-500 dark:text-neutral-400 mt-2 text-lg">Find your favorite category and start playing.</p>
                                 </div>
 
-                                <NavLink to={'/quizzes/topics'} className="hidden md:flex items-center gap-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium transition-colors">
+                                <NavLink to={'/quizzes/topics'} className="hidden md:flex items-center gap-2 text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 font-medium transition-colors">
                                     View All Topics <span aria-hidden="true">&rarr;</span>
                                 </NavLink>
                             </div>
@@ -120,27 +125,27 @@ export default function ShowTopics() {
                             >
                                 {data?.length > 0 && data.map((topic, index) => (
                                     <SwiperSlide key={index}>
-                                        <NavLink to={`/quizzes/${topic.slug}`} state={{ id: topic.id, title: topic.name }} className="block h-full group">
-                                            <div className="relative h-[320px] rounded-2xl overflow-hidden bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-sm group-hover:shadow-xl transition-all duration-300">
+                                        <NavLink to={`/quizzes/${topic.slug}`} state={{ id: topic.id, title: topic.name }} className="block h-full group perspective-1000">
+                                            <div className="relative h-[320px] rounded-2xl overflow-hidden bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-lg dark:shadow-none hover:shadow-2xl dark:hover:shadow-rose-900/10 transition-all duration-300 group-hover:-translate-y-1">
                                                 {/* Image */}
                                                 <div className="h-48 overflow-hidden relative">
-                                                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors z-10" />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10 opacity-60 group-hover:opacity-40 transition-opacity" />
                                                     <img
                                                         src={topic.image ? `${import.meta.env.VITE_Image_URL}${topic.image}` : logo}
                                                         alt={topic.name}
-                                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                                     />
                                                 </div>
 
                                                 {/* Content */}
-                                                <div className="p-5 flex flex-col justify-between h-[calc(100%-12rem)]">
+                                                <div className="p-6 flex flex-col justify-between h-[calc(100%-12rem)]">
                                                     <div>
-                                                        <h3 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                                                        <h3 className="text-xl font-bold text-neutral-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">
                                                             {topic.name}
                                                         </h3>
-                                                        <p className="text-sm text-neutral-500 dark:text-neutral-500 mt-1 line-clamp-2">Test your knowledge in {topic.name}.</p>
+                                                        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-2 line-clamp-2">Test your knowledge in {topic.name}.</p>
                                                     </div>
-                                                    <div className="flex items-center text-sm font-medium text-indigo-600 dark:text-indigo-400 opacity-0 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                                                    <div className="flex items-center text-sm font-bold text-rose-600 dark:text-rose-400 opacity-0 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                                                         Start Quiz &rarr;
                                                     </div>
                                                 </div>

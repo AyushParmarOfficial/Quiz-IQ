@@ -20,10 +20,10 @@ export default function Footer() {
                     {/* Brand Column */}
                     <div className="space-y-4">
                         <NavLink to="/" className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xl">
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-rose-500/20">
                                 Q
                             </div>
-                            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-neutral-950 to-neutral-500 dark:from-white dark:to-neutral-400">
+                            <span className="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-neutral-900 to-neutral-500 dark:from-white dark:to-neutral-400">
                                 QUIZ.IQ
                             </span>
                         </NavLink>
@@ -36,27 +36,27 @@ export default function Footer() {
                     <div>
                         <h3 className="font-semibold text-neutral-900 dark:text-gray-100 mb-4">Platform</h3>
                         <ul className="space-y-3 text-sm text-neutral-500 dark:text-neutral-400">
-                            <li><NavLink to="/quizzes" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">All Quizzes</NavLink></li>
-                            <li><NavLink to="/leaderboard" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Leaderboard</NavLink></li>
-                            <li><NavLink to="/challenges" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Daily Challenges</NavLink></li>
+                            <li><NavLink to="/quizzes" className="hover:text-rose-600 dark:hover:text-rose-400 transition-colors">All Quizzes</NavLink></li>
+                            <li><NavLink to="/leaderboard" className="hover:text-rose-600 dark:hover:text-rose-400 transition-colors">Leaderboard</NavLink></li>
+                            <li><NavLink to="/challenges" className="hover:text-rose-600 dark:hover:text-rose-400 transition-colors">Daily Challenges</NavLink></li>
                         </ul>
                     </div>
 
                     <div>
                         <h3 className="font-semibold text-neutral-900 dark:text-gray-100 mb-4">Company</h3>
                         <ul className="space-y-3 text-sm text-neutral-500 dark:text-neutral-400">
-                            <li><NavLink to="/about" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">About Us</NavLink></li>
-                            <li><NavLink to="/story" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Our Story</NavLink></li>
-                            <li><NavLink to="/careers" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Careers</NavLink></li>
+                            <li><NavLink to="/about" className="hover:text-rose-600 dark:hover:text-rose-400 transition-colors">About Us</NavLink></li>
+                            <li><NavLink to="/story" className="hover:text-rose-600 dark:hover:text-rose-400 transition-colors">Our Story</NavLink></li>
+                            <li><NavLink to="/careers" className="hover:text-rose-600 dark:hover:text-rose-400 transition-colors">Careers</NavLink></li>
                         </ul>
                     </div>
 
                     <div>
                         <h3 className="font-semibold text-neutral-900 dark:text-gray-100 mb-4">Legal</h3>
                         <ul className="space-y-3 text-sm text-neutral-500 dark:text-neutral-400">
-                            <li><NavLink to="/privacy" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Privacy Policy</NavLink></li>
-                            <li><NavLink to="/terms" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Terms of Service</NavLink></li>
-                            <li><NavLink to="/cookies" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Cookie Policy</NavLink></li>
+                            <li><NavLink to="/privacy" className="hover:text-rose-600 dark:hover:text-rose-400 transition-colors">Privacy Policy</NavLink></li>
+                            <li><NavLink to="/terms" className="hover:text-rose-600 dark:hover:text-rose-400 transition-colors">Terms of Service</NavLink></li>
+                            <li><NavLink to="/cookies" className="hover:text-rose-600 dark:hover:text-rose-400 transition-colors">Cookie Policy</NavLink></li>
                         </ul>
                     </div>
                 </div>

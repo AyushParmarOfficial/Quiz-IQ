@@ -70,14 +70,14 @@ export default function Header() {
             {/* Desktop Header */}
             <header
                 className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
-                        ? "bg-white/80 dark:bg-black/80 backdrop-blur-md shadow-sm border-b border-neutral-200 dark:border-white/10 h-16"
-                        : "bg-transparent h-20"
+                    ? "bg-white/80 dark:bg-black/80 backdrop-blur-md shadow-sm border-b border-neutral-200 dark:border-white/10 h-16"
+                    : "bg-transparent h-20"
                     }`}
             >
                 <div className="max-w-7xl mx-auto px-4 h-full flex items-center justify-between">
                     {/* Logo Area */}
                     <div className="flex items-center gap-2">
-                        <NavLink to="/" className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-neutral-900 to-neutral-500 dark:from-white dark:to-neutral-400">
+                        <NavLink to="/" className="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-rose-500 to-indigo-600">
                             QUIZ.IQ
                         </NavLink>
                     </div>
@@ -114,7 +114,7 @@ export default function Header() {
                                 <NavLink to="/account" className={navLinkClass}>Account</NavLink>
                                 <button
                                     onClick={handleLogout}
-                                    className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-full hover:bg-indigo-700 transition-colors"
+                                    className="px-4 py-2 text-sm font-medium text-white bg-neutral-900 dark:bg-white dark:text-neutral-900 rounded-full hover:shadow-lg transition-all"
                                 >
                                     Log Out
                                 </button>
@@ -122,7 +122,7 @@ export default function Header() {
                         ) : (
                             <NavLink
                                 to="/signin"
-                                className="px-5 py-2 text-sm font-medium text-white bg-indigo-600 rounded-full hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-500/30"
+                                className="px-6 py-2 text-sm font-bold text-white bg-gradient-to-r from-rose-500 to-indigo-600 rounded-full hover:shadow-lg hover:shadow-rose-500/30 transition-all hover:scale-105"
                             >
                                 Sign In
                             </NavLink>

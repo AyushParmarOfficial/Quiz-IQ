@@ -3,36 +3,38 @@ import { getApi } from "@/Services/Api";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import Loader from "@/Components/Common/Loader";
 
 export default function MoreTopics() {
 
     const [data, setData] = useState([]);
     const [loadedData, setLoadedData] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const handleData = async (url) => {
-        await getApi(data, setData, url);
+        await getApi(data, setData, url, setLoading);
     }
-    
+
     useEffect(() => {
         handleData("getActiveTopics");
-    },[]);
+    }, []);
 
-    useEffect(()=> {
+    useEffect(() => {
         if (data?.data && data.data.length > 0) {
 
             setLoadedData((prev) => {
                 const exiestingDataId = new Set(prev.map(items => items.id));
                 const uniqueNewData = data.data.filter(items => !exiestingDataId.has(items.id));
 
-                if (uniqueNewData.length === 0 ) return prev;
+                if (uniqueNewData.length === 0) return prev;
 
                 return [...prev, ...uniqueNewData];
             });
         }
-    },[data]);
+    }, [data]);
 
     const loadMore = () => {
-        const nextPageUrl = data?.next_page_url ;
+        const nextPageUrl = data?.next_page_url;
         if (!nextPageUrl) return;
         const url = new URL(nextPageUrl);
         const pageNumber = url?.searchParams.get('cursor');
@@ -53,12 +55,16 @@ export default function MoreTopics() {
         }
     }
 
+    if (loading && loadedData.length === 0) {
+        return <Loader />;
+    }
+
     return (
-        <> 
+        <>
             {/* ######################## Hero Section ########################  */}
             <div className="min-h-[70%] flex items-center justify-center pt-18 bg-transparent">
-                <HeroGeometric 
-                    mode="dark" 
+                <HeroGeometric
+                    mode="dark"
                     title1="Pick a Battle,"
                     title2="Lead the Pack."
                     description="Pick a field, face global rivals, and compete to lead each category with skill strategy, and true brilliance."
@@ -66,45 +72,52 @@ export default function MoreTopics() {
             </div>
 
             {/* ######################## Content Section  ########################  */}
-            <div className=" more-topics xl:mx-[100px] lg:mx-[80px] sm:mx-[50px] mx-[10px] mb-[20px] sm:mb-[30px] md:mb-[40px] lg:mb-[50px]">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10  mb-[50px] w-full">
-                    {loadedData?.length > 0 && loadedData.map((topic,index) => (
+            <div className="max-w-7xl mx-auto px-4 pb-24 relative z-10 w-full">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                    {loadedData?.length > 0 && loadedData.map((topic, index) => (
                         <motion.div
-                            initial="hidden" 
-                            whileInView="visible" 
-                            viewport={{ once: true, amount: 0.5}}
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true, amount: 0.2 }}
                             variants={fadeUpVariants}
-                        > 
-                            <NavLink to={`/quizzes/${topic.slug}`} state={{id: topic.id, title: topic.name}}>
-                                <div key={index} className="card col-span-1 shadow-lg rounded-[10px] h-full">
-                                    <div className="card-content rounded-[10px] bg-linear-to-r from-green-100/[0.1] via-transparent to-green-100/[0.1] h-full">
-                                        <div className="xl:h-[250px] lg:h-[200px] sm:h-[150px] h-[150px] overflow-hidden rounded-t-[5px]">
-                                            <img src={topic.image ?`${import.meta.env.VITE_Image_URL}${topic.image}` : logo } alt={topic.name} className="xl:h-[250px] lg:h-[200px] sm:h-[150px] h-[150px] rounded-t-[5px] w-full"/>
-                                        </div>  
-                                        <div className="p-2">
-                                            <h3 className="xl:text-2xl lg:text-xl md:text-xl text-lg text-start mx-[10px] text-bolder">{topic.name}</h3>
+                            key={index}
+                        >
+                            <NavLink to={`/quizzes/${topic.slug}`} state={{ id: topic.id, title: topic.name }} className="block h-full group perspective-1000">
+                                <div className="relative h-[320px] rounded-2xl overflow-hidden bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-lg hover:shadow-2xl transition-all duration-300 group-hover:-translate-y-1">
+                                    <div className="h-48 overflow-hidden relative">
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10 opacity-60 group-hover:opacity-40 transition-opacity" />
+                                        <img
+                                            src={topic.image ? `${import.meta.env.VITE_Image_URL}${topic.image}` : logo}
+                                            alt={topic.name}
+                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        />
+                                    </div>
+                                    <div className="p-6 flex flex-col justify-between h-[calc(100%-12rem)]">
+                                        <div>
+                                            <h3 className="text-xl font-bold text-neutral-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">
+                                                {topic.name}
+                                            </h3>
+                                        </div>
+                                        <div className="flex items-center text-sm font-bold text-rose-600 dark:text-rose-400 opacity-0 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                                            Start Quiz &rarr;
                                         </div>
                                     </div>
                                 </div>
                             </NavLink>
                         </motion.div>
-                    ))} 
+                    ))}
                 </div>
 
                 <div className="flex justify-center items-center">
-                    {data?.next_page_url !== null && 
-                        <motion.div
-                            initial="hidden" 
-                            whileInView="visible" 
-                            viewport={{ once: true, amount: 0.5}}
-                            variants={fadeUpVariants}
+                    {data?.next_page_url !== null &&
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={loadMore}
+                            className="px-8 py-3 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-bold text-sm tracking-wide shadow-xl hover:shadow-2xl transition-all"
                         >
-                            <div onClick={loadMore} className="flex justify-center items-center p-1 rounded-[5px] bg-linear-to-b from-transparent via-transparent to-rose-500/[0.2]">
-                                <div className="flex justify-center items-center rounded-[5px] p-2 border-1 px-5 hover:border-rose-500/[0.4]">
-                                    <button >Load More</button>
-                                </div>
-                            </div>
-                        </motion.div>
+                            Load More
+                        </motion.button>
                     }
                 </div>
             </div>

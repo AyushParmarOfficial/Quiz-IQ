@@ -8,10 +8,12 @@ import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation"
 import 'swiper/css/pagination'
+import Loader from "@/Components/Common/Loader";
 
 export default function AllQuizzes() {
 
     const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
     const quizRef = useRef(null);
     const quizPriviousRef = useRef(null);
     const quizNextRef = useRef(null);
@@ -19,7 +21,7 @@ export default function AllQuizzes() {
 
     useEffect(() => {
         const handleData = async (e) => {
-            await getApi(data, setData, url);
+            await getApi(data, setData, url, setLoading);
         }
         handleData();
     }, []);
@@ -63,6 +65,10 @@ export default function AllQuizzes() {
         },
     }
 
+    if (loading && data.length === 0) {
+        return <Loader />;
+    }
+
     return (
         <>
             {data && data.length > 0 && (
@@ -78,7 +84,7 @@ export default function AllQuizzes() {
                                 <div>
                                     <h2 className="text-4xl md:text-5xl font-black text-neutral-900 dark:text-white tracking-tight">
                                         Explore
-                                        <span className="text-indigo-600 dark:text-indigo-400"> Everything.</span>
+                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-indigo-600"> Everything.</span>
                                     </h2>
                                     <p className="text-neutral-500 dark:text-neutral-400 mt-3 text-lg">
                                         Dive into our full collection of quizzes.
@@ -99,7 +105,7 @@ export default function AllQuizzes() {
                                             &#10095;
                                         </button>
                                     </div>
-                                    <NavLink to={'/quizzes'} state={{ title: "All Quizzes" }} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-white font-semibold hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all">
+                                    <NavLink to={'/quizzes'} state={{ title: "All Quizzes" }} className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white/50 dark:bg-white/5 text-neutral-900 dark:text-white font-semibold hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all shadow-sm">
                                         Browse Library
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                                     </NavLink>
@@ -127,7 +133,7 @@ export default function AllQuizzes() {
                             >
                                 {data?.length > 0 && data.map((quiz, index) => (
                                     <SwiperSlide key={index}>
-                                        <NavLink to={`/quizzes/questions/${quiz.slug}`} className="group relative block h-[280px] overflow-hidden rounded-2xl bg-neutral-100 dark:bg-neutral-900">
+                                        <NavLink to={`/quizzes/questions/${quiz.slug}`} className="group relative block h-[280px] overflow-hidden rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-md hover:shadow-xl transition-all duration-300">
                                             {/* Image Background */}
                                             <div className="absolute inset-0">
                                                 <img
@@ -135,13 +141,13 @@ export default function AllQuizzes() {
                                                     alt={quiz.name}
                                                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 dark:opacity-70 group-hover:opacity-100"
                                                 />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
                                             </div>
 
                                             {/* Content */}
                                             <div className="absolute inset-0 flex flex-col justify-end p-6">
                                                 <div className="translate-y-4 transform transition-transform duration-300 group-hover:translate-y-0">
-                                                    <div className="mb-2 inline-flex items-center rounded-lg bg-indigo-600 px-2 py-1 text-xs font-bold text-white shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
+                                                    <div className="mb-2 inline-flex items-center rounded-lg bg-rose-600 px-2 py-1 text-xs font-bold text-white shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
                                                         Start Quiz
                                                     </div>
                                                     <h3 className="text-xl font-bold text-white leading-tight">

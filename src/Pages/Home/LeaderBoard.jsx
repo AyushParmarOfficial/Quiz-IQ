@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from "framer-motion"
 import { getApi } from "@/Services/Api";
 import { useSelector } from "react-redux";
+import Loader from "@/Components/Common/Loader";
 
 const tabs = [
     { label: "Today", value: "today" },
@@ -82,10 +83,11 @@ export default function LeaderBoard() {
     const [selectedTab, setSelectedTab] = useState(tabs[0]);
     const [leaderBoardData, setLeaderBoardData] = useState([]);
     const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
     let baseUrl = "leaderBoard";
 
     const handleData = async (url) => {
-        await getApi(data, setData, url);
+        await getApi(data, setData, url, setLoading);
     }
 
     useEffect(() => {
@@ -106,6 +108,7 @@ export default function LeaderBoard() {
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-[#030303] transition-colors duration-300">
+            {loading && <Loader />}
             {/* ######################## Hero Section ########################  */}
             {/* ######################## Hero Section ########################  */}
             <div className="pt-20">
@@ -130,7 +133,7 @@ export default function LeaderBoard() {
                                 {tabItem === selectedTab && (
                                     <motion.div
                                         layoutId="activeTab"
-                                        className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-rose-500 rounded-xl -z-10"
+                                        className="absolute inset-0 bg-gradient-to-r from-rose-500 to-indigo-600 rounded-xl -z-10"
                                     />
                                 )}
                                 {tabItem.label}
@@ -220,7 +223,7 @@ function Leaderboard({ users }) {
                             </div>
 
                             <div className="flex flex-col">
-                                <span className="font-bold text-gray-800 dark:text-gray-100 text-base md:text-lg group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                                <span className="font-bold text-gray-800 dark:text-gray-100 text-base md:text-lg group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">
                                     {user.user.name}
                                 </span>
                                 {isTop3 && (
@@ -233,7 +236,7 @@ function Leaderboard({ users }) {
 
                         {/* Score */}
                         <div className="flex flex-col items-end">
-                            <span className="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-rose-600 dark:from-indigo-400 dark:to-rose-400">
+                            <span className="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-indigo-600 dark:from-rose-400 dark:to-indigo-400">
                                 {user.total_coins ?? 0}
                             </span>
                             <span className="text-xs text-gray-400 uppercase tracking-widest font-medium">Points</span>

@@ -1,329 +1,328 @@
-import { useEffect, useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { HeroGeometric } from "@/Components/Ui/shadcn-io/shape-landing-hero"
+import { useEffect, useState, useRef } from "react"
+import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from "framer-motion"
 import { getApi } from "@/Services/Api";
-import { User, Phone, Mail, ShieldCheck, Edit3, Camera } from 'lucide-react';
+import { User, Phone, Mail, ShieldCheck, Edit3, Save, X, Fingerprint, ShieldAlert, Award, FileText } from 'lucide-react';
 import Loader from "@/Components/Common/Loader";
+import { NavLink } from "react-router-dom";
+import InputGroup from "@/Components/Forms/InputGroup";
+import InfoDisplay from "@/Components/Ui/InfoDisplay";
+
+// #################### 3D Hero Section ####################
+
+function AccountHero({ user }) {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const mouseX = useSpring(x, { stiffness: 500, damping: 100 });
+  const mouseY = useSpring(y, { stiffness: 500, damping: 100 });
+
+  function onMouseMove({ currentTarget, clientX, clientY }) {
+    const { left, top, width, height } = currentTarget.getBoundingClientRect();
+    x.set(clientX - left - width / 2);
+    y.set(clientY - top - height / 2);
+  }
+
+  // Reset when mouse leaves
+  function onMouseLeave() {
+    x.set(0);
+    y.set(0);
+  }
+
+  const rotateX = useTransform(mouseY, [-200, 200], [10, -10]);
+  const rotateY = useTransform(mouseX, [-200, 200], [-10, 10]);
+
+  return (
+    <div className="relative w-full py-20 md:py-32 flex items-center justify-center overflow-hidden">
+      <div className="absolute inset-0 bg-grid-black/[0.02] dark:bg-grid-white/[0.02] -z-10" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-rose-500/10 rounded-full blur-[100px] -z-10" />
+
+      <div
+        className="perspective-1000 max-w-6xl mx-auto px-4 w-full grid md:grid-cols-2 gap-12 items-center"
+        onMouseMove={onMouseMove}
+        onMouseLeave={onMouseLeave}
+      >
+        {/* Text Content */}
+        <div className="text-center md:text-left space-y-6 order-2 md:order-1">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h1 className="text-5xl md:text-7xl font-black tracking-tight text-neutral-900 dark:text-white leading-tight">
+              Your <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-indigo-600">
+                Legacy.
+              </span>
+            </h1>
+            <p className="mt-6 text-lg text-neutral-600 dark:text-neutral-400 max-w-lg mx-auto md:mx-0 font-medium leading-relaxed">
+              Manage your profile, track your progress, and see where you stand among the best.
+            </p>
+          </motion.div>
+        </div>
+
+        {/* 3D Card */}
+        <div className="flex justify-center md:justify-end order-1 md:order-2">
+          <motion.div
+            style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+            className="relative w-72 h-80 md:w-96 md:h-[400px] bg-white dark:bg-neutral-900 rounded-3xl border border-neutral-200 dark:border-white/10 shadow-2xl shadow-rose-500/20 backdrop-blur-xl flex items-center justify-center p-6"
+          >
+            <div style={{ transform: "translateZ(40px)" }} className="absolute inset-4 rounded-2xl border border-neutral-100 dark:border-white/5 bg-gradient-to-br from-rose-500/5 to-indigo-500/5 flex flex-col items-center justify-center text-center space-y-4">
+              <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-rose-500 to-indigo-600 p-[2px] shadow-lg">
+                <div className="w-full h-full rounded-full bg-white dark:bg-neutral-900 flex items-center justify-center">
+                  <span className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-br from-rose-500 to-indigo-600">
+                    {user?.name?.charAt(0) || "U"}
+                  </span>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-neutral-900 dark:text-white">{user?.name || "User"}</h3>
+                <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                  {user?.user_type === 'a' ? 'Administrator' : 'Challenger'}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// #################### Tab Configuration ####################
 
 const tabs = [
-  { label: "Profile", value: "account" },
-  { label: "Results", value: "result" },
-  { label: "Answers", value: "answers" },
+  { label: "Profile", value: "account", icon: User },
+  { label: "Results", value: "result", icon: Award },
+  { label: "Answers", value: "answers", icon: FileText },
 ]
+
+// #################### Main Component ####################
 
 export default function Account() {
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
-  const [leaderBoardData, setLeaderBoardData] = useState([]);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  let baseUrl = "account";
 
   const handleData = async (url) => {
     await getApi(data, setData, url, setLoading);
   }
 
   useEffect(() => {
-    setLeaderBoardData((prev) => ({ ...prev, [selectedTab?.value ?? 'today']: data }));
-  }, [data]);
-
-  useEffect(() => {
-    if (selectedTab) {
-      if (leaderBoardData && leaderBoardData[selectedTab.value]) {
-        setData(leaderBoardData[selectedTab.value]);
-        return;
-      }
-      baseUrl += `?type=${selectedTab.value}`;
+    let url = "account";
+    if (selectedTab.value !== "account") {
+      url += `?type=${selectedTab.value}`;
     }
-    handleData(baseUrl);
+    handleData(url);
   }, [selectedTab]);
 
-
   return (
-    <>
-      {loading && <Loader />}
-      {/* ######################## Hero Section ########################  */}
-      <div className="min-h-full flex items-center justify-center pt-18 bg-transparent">
-        <HeroGeometric
-          mode="dark"
-          title1=""
-          title2="Account"
-          description="Track your data, compete globally, and see where you lead with skill and strategy."
-          className="min-h-[38vh] md:min-h-[50vh]"
-        />
+    <div className="min-h-screen bg-neutral-50 dark:bg-[#030303] transition-colors duration-300">
+      {loading && !data && <Loader />}
+
+      <div className="pt-20">
+        <AccountHero user={data} />
       </div>
 
-      {/* ######################## Content Section  ########################  */}
-      <div className="md:ml-5 mt-[40px] bg-transparent overflow-hidden md:flex flex-row items-start max-w-full overflow-x-hidden">
+      <div className="max-w-7xl mx-auto px-4 pb-24 -mt-10 relative z-10">
         {/* Tabs */}
-        <nav className="h-full flex-shrink-0">
-          <ul className="flex md:flex-col m-0 p-4 list-none lg:w-80 gap-5 lg:text-2xl">
+        <div className="flex justify-center mb-12">
+          <div className="flex p-1.5 bg-white dark:bg-neutral-900/50 backdrop-blur-md rounded-2xl border border-neutral-200 dark:border-white/10 shadow-lg gap-1">
             {tabs.map((tabItem) => (
-              <motion.li
+              <button
                 key={tabItem.value}
-                initial={false}
                 onClick={() => setSelectedTab(tabItem)}
                 className={`
-                                relative flex-1 cursor-pointer select-none
-                                px-4 py-2 text-center md:text-start font-medium rounded-[10px]
-                                transition-colors duration-200 
-                                ${tabItem === selectedTab ? "bg-indigo-500/[0.2]" : "bg-transparent"}
-                            `}
+                                    relative px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 z-0 flex items-center gap-2
+                                    ${tabItem.value === selectedTab.value ? "text-white shadow-md" : "text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-white/5"}
+                                `}
               >
-                {tabItem.label}
-
-                {tabItem === selectedTab && (
+                {tabItem.value === selectedTab.value && (
                   <motion.div
-                    layoutId="underline"
-                    className="absolute left-1 right-1 bottom-0 h-0.5 bg-indigo-300 rounded-full"
+                    layoutId="activeTab"
+                    className="absolute inset-0 bg-gradient-to-r from-rose-500 to-indigo-600 rounded-xl -z-10"
                   />
                 )}
-              </motion.li>
+                <tabItem.icon size={16} />
+                {tabItem.label}
+              </button>
             ))}
-          </ul>
-        </nav>
+          </div>
+        </div>
 
-        {/* Content */}
-        <main className="flex-1 md:px-[16px] md:ml-0 ml-2">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={selectedTab.value}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
-              className="flex flex-col md:px-5"
-            >
-              {selectedTab.value === "account" && (
-                <AccountSection users={data} />
-              )}
-              {selectedTab.value === "result" && (
-                <AccountSection users={data} />
-              )}
-              {selectedTab.value === "answers" && (
-                <AccountSection users={data} />
-              )}
-            </motion.div>
-          </AnimatePresence>
-        </main>
+        {/* Content Area */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={selectedTab.value}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+          >
+            {selectedTab.value === "account" && <AccountSection user={data} />}
+            {selectedTab.value === "result" && (
+              <div className="bg-white dark:bg-neutral-900 rounded-3xl p-8 border border-neutral-200 dark:border-neutral-800 shadow-xl text-center">
+                <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-2">Quiz Results</h3>
+                <p className="text-neutral-500 dark:text-neutral-400">Your recent quiz performance will appear here.</p>
+              </div>
+            )}
+            {selectedTab.value === "answers" && (
+              <div className="bg-white dark:bg-neutral-900 rounded-3xl p-8 border border-neutral-200 dark:border-neutral-800 shadow-xl text-center">
+                <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-2">My Answers</h3>
+                <p className="text-neutral-500 dark:text-neutral-400">Review your submitted answers history.</p>
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
-    </>
+    </div>
   )
 }
 
-/**
- * ================= Account Section =================
- */
+// #################### Profile Section ####################
 
-function AccountSection({ users }) {
-  if (!users) return null;
-  return (
-    <div className="w-full w-max-2xl my-5 bg-transparent rounded-2xl overflow-hidden backdrop-blur-md shadow-2xl">
+function AccountSection({ user }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [formData, setFormData] = useState({});
 
-      {/* Content Area */}
-      <div className="pb-8 px-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start mb-8">
-          <div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">{users.name}</h1>
-            <p className="text-slate-400 text-sm flex items-center gap-2 mt-1">
-              <ShieldCheck size={14} className="text-indigo-400" />
-              {users.user_type === 'a' ? 'Administrator Account' : 'Standard User'}
-            </p>
-          </div>
+  useEffect(() => {
+    if (user) {
+      setFormData({ ...user });
+    }
+  }, [user]);
 
-          <div className="w-full sm:w-max flex justify-end">
-            <button className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-xl text-white text-sm font-medium transition-all active:scale-95">
-              <Edit3 size={16} className="text-slate-400" />
-              Edit Profile
+  const handleSave = (e) => {
+    e.preventDefault();
+    setIsSaving(true);
+    // Simulate API call
+    setTimeout(() => {
+      setIsSaving(false);
+      setIsEditing(false);
+      // Here you would trigger a re-fetch or update local state
+    }, 1500);
+  };
+
+  if (!user) return null;
+
+  if (isEditing) {
+    return (
+      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-3xl overflow-hidden shadow-2xl transition-all duration-300">
+        <form onSubmit={handleSave} className="animate-in fade-in zoom-in-95 duration-300">
+          <div className="flex justify-between items-center p-8 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50">
+            <div>
+              <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Edit Profile</h2>
+              <p className="text-neutral-500 dark:text-neutral-400 text-sm mt-1">Update your personal preferences</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => { setIsEditing(false); setFormData({ ...user }); }}
+              className="p-2 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-full transition-colors"
+            >
+              <X size={24} className="text-neutral-500" />
             </button>
           </div>
+
+          <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <InputGroup
+              label="Full Name"
+              value={formData.name || ''}
+              onChange={(v) => setFormData({ ...formData, name: v })}
+              icon={<User size={18} />}
+            />
+            <InputGroup
+              label="Email Address"
+              type="email"
+              value={formData.email || ''}
+              onChange={(v) => setFormData({ ...formData, email: v })}
+              icon={<Mail size={18} />}
+            />
+            <InputGroup
+              label="Mobile Number"
+              value={formData.mobile || ''}
+              onChange={(v) => setFormData({ ...formData, mobile: v })}
+              icon={<Phone size={18} />}
+            />
+
+            <InputGroup
+              label="Account Type"
+              value={formData.user_type === 'a' ? 'Administrator' : 'Standard User'}
+              icon={<ShieldAlert size={18} />}
+              disabled={true}
+            />
+          </div>
+
+          <div className="p-8 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50 flex gap-4">
+            <button
+              type="submit"
+              disabled={isSaving}
+              className="flex-1 flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-rose-500 to-indigo-600 hover:shadow-lg hover:shadow-rose-500/20 text-white rounded-xl font-bold transition-all disabled:opacity-70"
+            >
+              {isSaving ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <>
+                  <Save size={18} />
+                  Save Changes
+                </>
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsEditing(false)}
+              className="px-8 py-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 font-bold rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-3xl overflow-hidden shadow-xl">
+      <div className="p-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start mb-10">
+          <div>
+            <h1 className="text-3xl font-bold text-neutral-900 dark:text-white tracking-tight">{user.name}</h1>
+            <div className="flex items-center gap-3 mt-2">
+              <span className="px-3 py-1 bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 rounded-full text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">
+                {user.user_type === 'a' ? 'Admin Access' : 'User Access'}
+              </span>
+              <span className="text-neutral-500 dark:text-neutral-400 text-xs flex items-center gap-1 font-mono">
+                <Fingerprint size={12} /> ID: {user.id}
+              </span>
+            </div>
+          </div>
+
+          <button
+            onClick={() => setIsEditing(true)}
+            className="mt-4 sm:mt-0 group flex items-center gap-2 px-5 py-2.5 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-xl text-neutral-900 dark:text-white text-sm font-semibold transition-all active:scale-95"
+          >
+            <Edit3 size={16} className="text-neutral-500 group-hover:text-rose-500 transition-colors" />
+            Edit Profile
+          </button>
         </div>
 
-        {/* Data Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <InfoCard
-            icon={<User size={18} />}
-            label="Full Name"
-            value={users.name}
-          />
-          <InfoCard
-            icon={<Mail size={18} />}
-            label="Email Address"
-            value={users.email}
-          />
-          <InfoCard
-            icon={<Phone size={18} />}
-            label="Phone Number"
-            value={users.mobile}
-          />
-          <InfoCard
-            icon={<ShieldCheck size={18} />}
-            label="Account ID"
-            value={`#USR-00${users.id}`}
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <InfoDisplay icon={<User size={18} />} label="Full Name" value={user.name} />
+          <InfoDisplay icon={<Mail size={18} />} label="Email Address" value={user.email} />
+          <InfoDisplay icon={<Phone size={18} />} label="Mobile Number" value={user.mobile} />
+          <InfoDisplay icon={<ShieldCheck size={18} />} label="Account Role" value={user.user_type === 'a' ? 'Administrator' : 'Standard User'} />
         </div>
 
-        {/* Footer Hint */}
-        <div className="mt-8 pt-6 border-t border-white/5">
-          <p className="text-xs text-slate-500 text-center uppercase tracking-widest">
-            {(() => {
-              let dateStr = users.created_at;
-              let date = new Date(dateStr);
-              var month = date.toLocaleString('default', { month: 'long' });
-              var year = date.getFullYear();
-              return `Member since ${month} ${year}`;
-            })()}
+        <div className="mt-10 pt-6 border-t border-neutral-200 dark:border-neutral-800">
+          <p className="text-xs text-neutral-400 text-center uppercase tracking-widest">
+            Joined {new Date(user.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
           </p>
         </div>
       </div>
     </div>
-  )
-}
-
-function InfoCard({ icon, label, value }) {
-  return (
-    <div className="group p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-indigo-500/30 transition-colors">
-      <div className="flex items-center gap-3 mb-1 text-slate-400 group-hover:text-indigo-400 transition-colors">
-        {icon}
-        <span className="text-xs font-semibold uppercase tracking-wider">{label}</span>
-      </div>
-      <div className="text-slate-200 font-medium pl-7">
-        {value}
-      </div>
-    </div>
   );
 }
 
-function EditUserAccountForm({ users }) {
-  return (
-    <div className="w-full max-w-2xl bg-slate-900/40 border border-white/10 rounded-[2rem] overflow-hidden backdrop-blur-xl shadow-2xl transition-all duration-500 ring-1 ring-white/5">
-
-      <div className="pt-20 pb-10 px-10">
-        {!isEditing ? (
-          /* VIEW MODE: Clean Data Presentation */
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-10">
-              <div>
-                <h1 className="text-3xl font-bold text-white tracking-tight">{users.name}</h1>
-                <div className="flex items-center gap-3 mt-2">
-                  <span className="px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-[10px] font-bold text-indigo-400 uppercase tracking-widest">
-                    {users.user_type === 'a' ? 'Admin Access' : 'User Access'}
-                  </span>
-                  <span className="text-slate-500 text-xs flex items-center gap-1">
-                    <Fingerprint size={12} /> ID: {users.id}
-                  </span>
-                </div>
-              </div>
-
-              <button
-                onClick={() => setIsEditing(true)}
-                className="group flex items-center gap-2 px-6 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-white text-sm font-semibold transition-all active:scale-95"
-              >
-                <Edit3 size={16} className="text-slate-400 group-hover:text-indigo-400 transition-colors" />
-                Edit Profile
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <InfoDisplay icon={<User size={18} />} label="Full Name" value={users.name} />
-              <InfoDisplay icon={<Mail size={18} />} label="Email Address" value={users.email} />
-              <InfoDisplay icon={<Phone size={18} />} label="Mobile Number" value={users.mobile} />
-              <InfoDisplay icon={<ShieldCheck size={18} />} label="User Type" value={users.user_type === 'a' ? 'Administrator' : 'Standard'} />
-            </div>
-          </div>
-        ) : (
-          /* EDIT MODE: Structured Form */
-          <form onSubmit={handleSave} className="animate-in fade-in zoom-in-95 duration-400">
-            <div className="flex justify-between items-center mb-10">
-              <div>
-                <h2 className="text-2xl font-bold text-white">Modify Profile</h2>
-                <p className="text-slate-500 text-sm mt-1">Update your personal account details</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => { setIsEditing(false); setFormData({ ...users }); }}
-                className="p-3 hover:bg-white/5 text-slate-500 hover:text-white rounded-2xl transition-all"
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <InputGroup
-                label="Full Name"
-                placeholder="Enter your name"
-                value={formData.name}
-                onChange={(v) => setFormData({ ...formData, name: v })}
-                icon={<User size={18} />}
-              />
-              <InputGroup
-                label="Email Address"
-                placeholder="name@company.com"
-                type="email"
-                value={formData.email}
-                onChange={(v) => setFormData({ ...formData, email: v })}
-                icon={<Mail size={18} />}
-              />
-              <InputGroup
-                label="Mobile Number"
-                placeholder="+91 00000 00000"
-                value={formData.mobile}
-                onChange={(v) => setFormData({ ...formData, mobile: v })}
-                icon={<Phone size={18} />}
-              />
-
-              <div className="flex flex-col gap-2.5">
-                <label className="text-[11px] uppercase font-bold text-slate-500 tracking-[0.15em] ml-1">User Authorization</label>
-                <div className="relative group/select">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within/select:text-indigo-400 transition-colors pointer-events-none">
-                    <ShieldAlert size={18} />
-                  </div>
-                  <select
-                    value={formData.user_type}
-                    onChange={(e) => setFormData({ ...formData, user_type: e.target.value })}
-                    className="w-full bg-white/5 border border-white/10 focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/10 rounded-2xl py-3.5 pl-12 pr-4 text-slate-200 text-sm outline-none transition-all appearance-none cursor-pointer"
-                  >
-                    <option value="a" className="bg-slate-900">Administrator</option>
-                    <option value="u" className="bg-slate-900">Standard User</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4 mt-12 pt-8 border-t border-white/5">
-              <button
-                type="submit"
-                disabled={isSaving}
-                className="flex-[2] flex items-center justify-center gap-2 py-4 bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-600/50 text-white rounded-2xl font-bold transition-all shadow-xl shadow-indigo-600/20 active:scale-[0.98]"
-              >
-                {isSaving ? (
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                ) : (
-                  <>
-                    <Save size={20} />
-                    Commit Changes
-                  </>
-                )}
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsEditing(false)}
-                className="flex-1 py-4 bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white rounded-2xl font-bold transition-all border border-white/5"
-              >
-                Discard
-              </button>
-            </div>
-          </form>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/**
- * ================= Result Section =================
- */
+// #################### Helper Components ####################
 
 
-/**
- * ================= Answer Section =================
- */
+
+

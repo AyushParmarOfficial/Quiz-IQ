@@ -1,17 +1,16 @@
-import { useSelector } from "react-redux";
-import { FaUserCircle } from "react-icons/fa";
+import { FaUserCircle, FaUser, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { NavLink, useSearchParams } from "react-router-dom";
 import { useState } from "react";
 import { HeroGeometric } from "@/Components/Ui/shadcn-io/shape-landing-hero";
 
-import TextInput from "../../Components/Forms/TextInput";
-import InputLable from "../../Components/Forms/InputLable";
+import InputGroup from "../../Components/Forms/InputGroup";
 import InputError from "../../Components/Forms/InputError";
 import SubmitBtn from "../../Components/Forms/SubmitBtn";
 
 export default function SignIn() {
-    const themeMode = useSelector((state) => state.theme.mode);
     const [errors, setErrors] = useState([]);
+    const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState({
         username: "",
         password: "",
@@ -22,6 +21,7 @@ export default function SignIn() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
         try {
             const response = await fetch(`${import.meta.env.VITE_API_URL}signin`, {
                 method: "POST",
@@ -47,17 +47,17 @@ export default function SignIn() {
                     }
                 }
             }
-
         } catch (error) {
-            console.error("Error during sign up:", error);
+            console.error("Error during sign in:", error);
+        } finally {
+            setIsLoading(false);
         }
     }
     return (
-        <div className="min-h-screen relative flex items-center justify-center overflow-hidden bg-gray-50 dark:bg-[#030303] transition-colors duration-300">
+        <div className="min-h-screen relative flex items-center justify-center bg-gray-50 dark:bg-[#030303] transition-colors duration-300 py-10 md:py-20">
             {/* Background Hero */}
-            <div className="absolute inset-0 z-0">
+            <div className="fixed inset-0 z-0 overflow-hidden">
                 <HeroGeometric
-                    mode={themeMode}
                     title1=""
                     title2=""
                     description=""
@@ -65,7 +65,7 @@ export default function SignIn() {
                 />
             </div>
 
-            <div className="relative z-10 w-full max-w-md px-4">
+            <div className="relative z-10 w-full max-w-md px-4 mt-16">
                 <div className="backdrop-blur-xl bg-white/80 dark:bg-black/60 border border-white/20 dark:border-white/10 shadow-2xl rounded-3xl p-8 md:p-10 transform perspective-1000">
 
                     {/* Header */}
@@ -87,39 +87,49 @@ export default function SignIn() {
 
                     {/* Form */}
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        <div className="relative group">
-                            <TextInput
+                        <div>
+                            <InputGroup
+                                label="Username"
+                                icon={<FaUser className="w-5 h-5" />}
                                 name="username"
                                 id="username"
                                 placeholder="Email or Mobile"
+                                value={data.username}
                                 onChange={(e) => setData({ ...data, [e.target.name]: e.target.value })}
-                                className="w-full px-5 py-4 bg-white/50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all placeholder:text-gray-400 dark:text-white"
                                 required
+                                className="bg-white/50 dark:bg-white/5 border-gray-200 dark:border-white/10 focus:ring-indigo-500"
                             />
-                            <label className="absolute -top-2.5 left-4 px-2 bg-white/0 backdrop-blur-3xl text-xs font-medium text-indigo-600 dark:text-indigo-400">
-                                Username
-                            </label>
                         </div>
 
-                        <div className="relative group">
-                            <TextInput
+                        <div>
+                            <InputGroup
+                                label="Password"
+                                icon={<FaLock className="w-5 h-5" />}
+                                rightElement={
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="focus:outline-none"
+                                    >
+                                        {showPassword ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
+                                    </button>
+                                }
                                 name="password"
                                 id="password"
-                                type="password"
+                                type={showPassword ? "text" : "password"}
                                 placeholder="Password"
+                                value={data.password}
                                 onChange={(e) => setData({ ...data, [e.target.name]: e.target.value })}
-                                className="w-full px-5 py-4 bg-white/50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all placeholder:text-gray-400 dark:text-white"
                                 required
+                                className="bg-white/50 dark:bg-white/5 border-gray-200 dark:border-white/10 focus:ring-indigo-500"
                             />
-                            <label className="absolute -top-2.5 left-4 px-2 bg-white/0 backdrop-blur-3xl text-xs font-medium text-indigo-600 dark:text-indigo-400">
-                                Password
-                            </label>
-                            <InputError message={errors.error} />
+                            <InputError message={errors.error} className="mt-2" />
                         </div>
 
                         <div className="pt-4">
                             <SubmitBtn
                                 value="Sign In"
+                                isLoading={isLoading}
                                 className="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-rose-600 text-white font-bold text-lg shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                             />
                         </div>
